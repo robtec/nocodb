@@ -40,7 +40,7 @@ on:
         required: true
 
 jobs:
-  buildx:
+  build:
     runs-on: ubuntu-latest
     env:
       working-directory: ./packages/nocodb
@@ -102,14 +102,12 @@ jobs:
           npm run docker:build
         working-directory: ${{ env.working-directory }}
 
-      - name: Build and push
+      - name: Build Image
         uses: docker/build-push-action@v3.2.0
         with:
           context: ${{ env.working-directory }}
           build-args: NC_VERSION=${{ steps.get-docker-repository.outputs.DOCKER_BUILD_TAG }}
           platforms: linux/amd64
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache-new
           tags: |
             nocodb/${{ steps.get-docker-repository.outputs.DOCKER_REPOSITORY }}:${{ steps.get-docker-repository.outputs.DOCKER_BUILD_TAG }}
             nocodb/${{ steps.get-docker-repository.outputs.DOCKER_REPOSITORY }}:${{ steps.get-docker-repository.outputs.DOCKER_BUILD_LATEST_TAG }}
